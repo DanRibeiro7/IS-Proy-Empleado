@@ -1,54 +1,56 @@
-@extends('layouts.app')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            Lista de Empleados
+        </h2>
+        <a href="{{ route('empleados.create') }}"
+       class="btn btn-default">
+        + Nuevo Empleado
+    </a>
+    </x-slot>
 
-@section('content')
-<div class="container">
-    <h2>Lista de Empleados</h2>
-
-    <a href="{{ route('empleados.create') }}" class="btn btn-success mb-3">Nuevo Empleado</a>
-
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
-
-    <table class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>DNI</th>
-                <th>Nombre Completo</th>
-                <th>Género</th>
-                <th>Celular</th>
-                <th>Correo</th>
-                <th>Estado</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-        @forelse($empleados as $empleado)
-            <tr>
-                <td>{{ $empleado->idEmpleado }}</td>
-                <td>{{ $empleado->dni }}</td>
-                <td>{{ $empleado->nombres }} {{ $empleado->apePaterno }} {{ $empleado->apeMaterno }}</td>
-                <td>{{ $empleado->genero }}</td>
-                <td>{{ $empleado->numCelular }}</td>
-                <td>{{ $empleado->correo }}</td>
-                <td>{{ $empleado->idEstado }}</td>
-                <td>
-                    <a href="{{ route('empleados.edit', $empleado->idEmpleado) }}" class="btn btn-sm btn-warning">Editar</a>
-
-                    <form action="{{ route('empleados.destroy', $empleado->idEmpleado) }}" method="POST" style="display:inline-block;">
-                        @csrf
-                        @method('DELETE')
-                        <button class="btn btn-sm btn-danger" onclick="return confirm('¿Deseas eliminar este empleado?')">Eliminar</button>
-                    </form>
-                </td>
-            </tr>
-        @empty
-            <tr>
-                <td colspan="8">No hay empleados registrados.</td>
-            </tr>
-        @endforelse
-        </tbody>
-    </table>
-</div>
-@endsection
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
+                <table class="table-auto w-full text-left">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="px-4 py-2">Código</th>
+                            <th class="px-4 py-2">DNI</th>
+                            <th class="px-4 py-2">Nombres</th>
+                            <th class="px-4 py-2">Apellidos</th>
+                            <th class="px-4 py-2">Correo</th>
+                            <th class="px-4 py-2">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($empleados as $empleado)
+                            <tr class="border-t">
+                                <td class="px-4 py-2">{{ $empleado->codEmpleado }}</td>
+                                <td class="px-4 py-2">{{ $empleado->dni }}</td>
+                                <td class="px-4 py-2">{{ $empleado->nombres }}</td>
+                                <td class="px-4 py-2">{{ $empleado->apePaterno }} {{ $empleado->apeMaterno }}</td>
+                                <td class="px-4 py-2">{{ $empleado->correo }}</td>
+                                <td class="px-4 py-2">
+                                    <a href="{{ route('empleados.edit', $empleado->idEmpleado) }}" class="text-blue-600 hover:underline">Editar</a> |
+                                    <form action="{{ route('empleados.destroy', $empleado->idEmpleado) }}" method="POST" class="inline-block">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" onclick="return confirm('¿Eliminar este empleado?')" class="text-red-600 hover:underline">
+                                            Eliminar
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
+                        @if ($empleados->isEmpty())
+                            <tr>
+                                <td colspan="6" class="text-center py-4 text-gray-500">No hay empleados registrados.</td>
+                            </tr>
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</x-app-layout>

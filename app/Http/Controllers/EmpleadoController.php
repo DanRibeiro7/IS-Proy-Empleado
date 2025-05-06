@@ -1,8 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\Estado;
 use App\Models\Empleado;
+use App\Models\EstadoCivil;
 use Illuminate\Http\Request;
 
 class EmpleadoController extends Controller
@@ -12,7 +13,8 @@ class EmpleadoController extends Controller
      */
     public function index()
     {
-        //
+        $empleados = Empleado::all();
+        return view('empleado.index', compact('empleados'));
     }
 
     /**
@@ -20,7 +22,9 @@ class EmpleadoController extends Controller
      */
     public function create()
     {
-        //
+        $estados_civiles=EstadoCivil::all();
+        $estados=Estado::whereIn('idEstado',[1,2])->get();
+        return view('empleado.create',compact('estados_civiles','estados'));
     }
 
     /**
@@ -28,10 +32,9 @@ class EmpleadoController extends Controller
      */
     public function store(Request $request)
     {
-        // Validar los datos del formulario
         $request->validate([
-            'codEmpleado' => 'required|unique:empleados',
-            'dni' => 'required|unique:empleados',
+            'codEmpleado' => 'required|unique:empleado',
+            'dni' => 'required|unique:empleado',
             'nombres' => 'required',
             'apePaterno' => 'required',
             'apeMaterno' => 'required',
@@ -41,11 +44,10 @@ class EmpleadoController extends Controller
             'direccion' => 'required',
             'numCelular' => 'required',
             'correo' => 'required|email',
-            'photoUrl' => 'nullable|url',
+            'photoUrl' => 'nullable',
             'idEstado' => 'required',
         ]);
-    
-        // Crear un nuevo empleado usando los datos validados
+
         Empleado::create([
             'codEmpleado' => $request->codEmpleado,
             'dni' => $request->dni,
@@ -60,10 +62,9 @@ class EmpleadoController extends Controller
             'correo' => $request->correo,
             'photoUrl' => $request->photoUrl,
             'idEstado' => $request->idEstado,
-            'fechacreacion' => now(), // Puedes almacenar la fecha actual en este campo
+            'fechacreacion' => now(),
         ]);
-    
-        // Redirigir al listado de empleados con un mensaje de éxito
+
         return redirect()->route('empleados.index')->with('success', 'Empleado creado con éxito.');
     }
 
@@ -72,7 +73,7 @@ class EmpleadoController extends Controller
      */
     public function show(Empleado $empleado)
     {
-        //
+        return view('empleado.show', compact('empleado'));
     }
 
     /**
@@ -80,57 +81,55 @@ class EmpleadoController extends Controller
      */
     public function edit(Empleado $empleado)
     {
-        //
+        return view('empleado.edit', compact('empleado'));
     }
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, Empleado $empleado)
-{
-    // Validar los datos del formulario
-    $request->validate([
-        'codEmpleado' => 'required|unique:empleados,codEmpleado,' . $empleado->idEmpleado,
-        'dni' => 'required|unique:empleados,dni,' . $empleado->idEmpleado,
-        'nombres' => 'required',
-        'apePaterno' => 'required',
-        'apeMaterno' => 'required',
-        'fechaNacimiento' => 'required|date',
-        'genero' => 'required',
-        'idEstCivil' => 'required',
-        'direccion' => 'required',
-        'numCelular' => 'required',
-        'correo' => 'required|email',
-        'photoUrl' => 'nullable|url',
-        'idEstado' => 'required',
-    ]);
+    {
+        $request->validate([
+            'codEmpleado' => 'required|unique:empleados,codEmpleado,' . $empleado->idEmpleado . ',idEmpleado',
+            'dni' => 'required|unique:empleados,dni,' . $empleado->idEmpleado . ',idEmpleado',
+            'nombres' => 'required',
+            'apePaterno' => 'required',
+            'apeMaterno' => 'required',
+            'fechaNacimiento' => 'required|date',
+            'genero' => 'required',
+            'idEstCivil' => 'required',
+            'direccion' => 'required',
+            'numCelular' => 'required',
+            'correo' => 'required|email',
+            'photoUrl' => 'nullable|url',
+            'idEstado' => 'required',
+        ]);
 
-    // Actualizar el empleado
-    $empleado->update([
-        'codEmpleado' => $request->codEmpleado,
-        'dni' => $request->dni,
-        'nombres' => $request->nombres,
-        'apePaterno' => $request->apePaterno,
-        'apeMaterno' => $request->apeMaterno,
-        'fechaNacimiento' => $request->fechaNacimiento,
-        'genero' => $request->genero,
-        'idEstCivil' => $request->idEstCivil,
-        'direccion' => $request->direccion,
-        'numCelular' => $request->numCelular,
-        'correo' => $request->correo,
-        'photoUrl' => $request->photoUrl,
-        'idEstado' => $request->idEstado,
-    ]);
+        $empleado->update([
+            'codEmpleado' => $request->codEmpleado,
+            'dni' => $request->dni,
+            'nombres' => $request->nombres,
+            'apePaterno' => $request->apePaterno,
+            'apeMaterno' => $request->apeMaterno,
+            'fechaNacimiento' => $request->fechaNacimiento,
+            'genero' => $request->genero,
+            'idEstCivil' => $request->idEstCivil,
+            'direccion' => $request->direccion,
+            'numCelular' => $request->numCelular,
+            'correo' => $request->correo,
+            'photoUrl' => $request->photoUrl,
+            'idEstado' => $request->idEstado,
+        ]);
 
-    // Redirigir a la lista con un mensaje de éxito
-    return redirect()->route('empleados.index')->with('success', 'Empleado actualizado con éxito.');
-}
+        return redirect()->route('empleados.index')->with('success', 'Empleado actualizado con éxito.');
+    }
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Empleado $empleado)
     {
-        //
+        $empleado->delete();
+        return redirect()->route('empleados.index')->with('success', 'Empleado eliminado correctamente.');
     }
 }
