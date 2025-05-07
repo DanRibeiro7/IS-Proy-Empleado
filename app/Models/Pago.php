@@ -12,7 +12,7 @@ class Pago extends Model
         'idContrato',
         'idBanco',
         'numCuenta',
-        'fechaHora',
+        'fechaPago',
         'estado',
         'monto',
         'gratificacion',

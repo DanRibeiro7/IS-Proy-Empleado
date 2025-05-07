@@ -68,8 +68,32 @@ class ContratoController extends Controller
             'horasLaboral'  => $request->horasLaboral,
             'fechacreacion' => $request->fechacreacion,
         ]);
-        $fechainicio=$contrato->fechaInicio;
-        $fechaFin=$contrato->fechaFin;
+       
+
+        $inicio = $contrato->fechaInicio->copy()->startOfMonth();
+        $fin = $contrato->fechaFin->copy()->startOfMonth();
+
+        $fechas = [];
+
+        for ($fecha = $inicio->copy(); $fecha <= $fin; $fecha->addMonth()) {
+            $fechas[] = $fecha->copy(); // Guarda una copia del objeto Carbon
+        }
+
+        // Ejemplo: crear registros con esas fechas
+        foreach ($fechas as $fecha) {
+            Pago::create([
+                'idContrato' => $contrato->idContrato,
+                'idBanco' => null, // O el valor que necesites
+                'numCuenta' => null, // O el valor que necesites
+                'fechaPago' => $fecha,
+                'estado' => 1, // O el valor que necesites
+                'monto' => null, // O el valor que necesites
+                'gratificacion' => null, // O el valor que necesites
+                'fechacreacion' => now(),
+            ]);
+        }
+        
+
 
 
 
