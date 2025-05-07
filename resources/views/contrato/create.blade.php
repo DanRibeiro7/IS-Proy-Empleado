@@ -165,17 +165,10 @@
         actualizarHorasLaborales();
     });
 </script>
-                    <!-- Fecha de Creación -->
-                    <div class="mb-6">
-                        <label for="fechacreacion" class="block text-sm font-semibold text-gray-700">Fecha de Creación</label>
-                        <input type="date" name="fechacreacion" id="fechacreacion" class="mt-2 p-2 border border-gray-300 rounded-lg w-full" value="{{ old('fechacreacion', $contrato->fechacreacion ?? '') }}" required>
-                        @error('fechacreacion')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
+                  
 
                     <!-- Botón de Submit -->
-                    <button type="submit" class="w-full mt-4 bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition duration-300">
+                    <button type="submit" class="">
                         {{ isset($contrato) ? 'Actualizar' : 'Guardar' }}
                     </button>
                 </form>

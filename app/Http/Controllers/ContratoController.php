@@ -7,6 +7,7 @@ use App\Models\Modalidad;
 use App\Models\Jornada;
 use App\Models\Estado;
 use App\Models\Contrato;
+use App\Models\Pago;
 use Illuminate\Http\Request;
 
 class ContratoController extends Controller
@@ -40,7 +41,7 @@ class ContratoController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+       /* $request->validate([
             //'codEmpleado' => 'required|unique:empleado',
             'idEmpleado' => 'required',
             'idArea' => 'required',
@@ -53,7 +54,7 @@ class ContratoController extends Controller
             'horasLaboral' => 'required',
             'fechacreacion' => 'required',
             
-        ]);
+        ]);*/
         //// Crear un nuevo contrato usando los datos validados
         $contrato= Contrato::create([
             
@@ -66,17 +67,16 @@ class ContratoController extends Controller
             'fechaFin'      => $request->fechaFin,
             'idEstado'      => $request->idEstado,
             'horasLaboral'  => $request->horasLaboral,
-            'fechacreacion' => $request->fechacreacion,
+            'fechacreacion' => now(),
         ]);
        
-
-        $inicio = $contrato->fechaInicio->copy()->startOfMonth();
-        $fin = $contrato->fechaFin->copy()->startOfMonth();
+                $inicio = $contrato->fechaInicio->copy()->addMonth(); // comienza 1 mes después
+            $fin = $contrato->fechaFin->copy()->startOfMonth();   // asegúrate de que esté al inicio del mes
 
         $fechas = [];
 
-        for ($fecha = $inicio->copy(); $fecha <= $fin; $fecha->addMonth()) {
-            $fechas[] = $fecha->copy(); // Guarda una copia del objeto Carbon
+        for ($fecha = $inicio->copy()->startOfMonth(); $fecha <= $fin; $fecha->addMonth()) {
+            $fechas[] = $fecha->copy(); // guardar copia para usarla más adelante
         }
 
         // Ejemplo: crear registros con esas fechas
