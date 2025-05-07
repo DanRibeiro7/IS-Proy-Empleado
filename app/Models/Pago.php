@@ -15,7 +15,7 @@ class Pago extends Model
         'fechaHora',
         'estado',
         'monto',
-        'esgratificacion',
+        'gratificacion',
         'fechacreacion',
     ];
     public $timestamps = false;

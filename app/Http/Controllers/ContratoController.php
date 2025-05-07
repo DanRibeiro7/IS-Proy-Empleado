@@ -1,7 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\Empleado;
+use App\Models\Area;
+use App\Models\Modalidad;
+use App\Models\Jornada;
+use App\Models\Estado;
 use App\Models\Contrato;
 use Illuminate\Http\Request;
 
@@ -12,7 +16,8 @@ class ContratoController extends Controller
      */
     public function index()
     {
-        //
+        $contratos = Contrato::all(); // O el método que estés utilizando para obtener los contratos
+        return view('contrato.index', compact('contratos'));
     }
 
     /**
@@ -20,7 +25,14 @@ class ContratoController extends Controller
      */
     public function create()
     {
-        //
+        $empleados = Empleado::all(); // Obtener todos los empleados
+        $areas = Area::all(); // Obtener todas las áreas
+        $modalidades = Modalidad::all(); // Obtener todas las modalidades
+        $jornadas = Jornada::all(); // Obtener todas las jornadas
+        $estados=Estado::whereIn('idEstado',[1,2])->get();
+    
+        // Pasar estas variables a la vista
+        return view('contrato.create', compact('empleados', 'areas', 'modalidades', 'jornadas','estados'));
     }
 
     /**

@@ -18,6 +18,12 @@
                     <x-nav-link :href="route('empleados.index')" :active="request()->routeIs('empleados')">
                         Empleados
                     </x-nav-link>
+                    <x-nav-link :href="route('contratos.index')" :active="request()->routeIs('contratos')">
+                        Contratos
+                    </x-nav-link>
+                    <x-nav-link :href="route('pagos.index')" :active="request()->routeIs('pagos')">
+                        Pagos
+                    </x-nav-link>
                 </div>
             </div>
 

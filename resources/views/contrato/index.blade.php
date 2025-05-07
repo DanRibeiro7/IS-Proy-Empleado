@@ -1,60 +1,63 @@
-@extends('layouts.app')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            Lista de Contratos
+        </h2>
+        <a href="{{ route('contratos.create') }}" class="btn btn-default">
+            + Nuevo Contrato
+        </a>
+    </x-slot>
 
-@section('content')
-<div class="container">
-    <h2>Lista de Contratos</h2>
-
-    <a href="{{ route('contratos.create') }}" class="btn btn-success mb-3">Nuevo Contrato</a>
-
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
-
-    <table class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Empleado (ID)</th>
-                <th>Área</th>
-                <th>Modalidad</th>
-                <th>Jornada</th>
-                <th>Código</th>
-                <th>Inicio</th>
-                <th>Fin</th>
-                <th>Horas</th>
-                <th>Estado</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-        @forelse($contratos as $contrato)
-            <tr>
-                <td>{{ $contrato->idContrato }}</td>
-                <td>{{ $contrato->idEmpleado }}</td>
-                <td>{{ $contrato->idArea }}</td>
-                <td>{{ $contrato->idModalidad }}</td>
-                <td>{{ $contrato->idJornada }}</td>
-                <td>{{ $contrato->codContrato }}</td>
-                <td>{{ $contrato->fechaInicio }}</td>
-                <td>{{ $contrato->fechaFin }}</td>
-                <td>{{ $contrato->horasLaboral }}</td>
-                <td>{{ $contrato->idEstado }}</td>
-                <td>
-                    <a href="{{ route('contratos.edit', $contrato->idContrato) }}" class="btn btn-sm btn-warning">Editar</a>
-
-                    <form action="{{ route('contratos.destroy', $contrato->idContrato) }}" method="POST" style="display:inline-block;">
-                        @csrf
-                        @method('DELETE')
-                        <button class="btn btn-sm btn-danger" onclick="return confirm('¿Deseas eliminar este contrato?')">Eliminar</button>
-                    </form>
-                </td>
-            </tr>
-        @empty
-            <tr>
-                <td colspan="11">No hay contratos registrados.</td>
-            </tr>
-        @endforelse
-        </tbody>
-    </table>
-</div>
-@endsection
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
+                <table class="table-auto w-full text-left">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="px-4 py-2">Código</th>
+                            <th class="px-4 py-2">Empleado (ID)</th>
+                            <th class="px-4 py-2">Área</th>
+                            <th class="px-4 py-2">Modalidad</th>
+                            <th class="px-4 py-2">Jornada</th>
+                            <th class="px-4 py-2">Fecha Inicio</th>
+                            <th class="px-4 py-2">Fecha Fin</th>
+                            <th class="px-4 py-2">Horas</th>
+                            <th class="px-4 py-2">Estado</th>
+                            <th class="px-4 py-2">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($contratos as $contrato)
+                            <tr class="border-t">
+                                <td class="px-4 py-2">{{ $contrato->codContrato }}</td>
+                                <td class="px-4 py-2">{{ $contrato->idEmpleado }}</td>
+                                <td class="px-4 py-2">{{ $contrato->idArea }}</td>
+                                <td class="px-4 py-2">{{ $contrato->idModalidad }}</td>
+                                <td class="px-4 py-2">{{ $contrato->idJornada }}</td>
+                                <td class="px-4 py-2">{{ $contrato->fechaInicio }}</td>
+                                <td class="px-4 py-2">{{ $contrato->fechaFin }}</td>
+                                <td class="px-4 py-2">{{ $contrato->horasLaboral }}</td>
+                                <td class="px-4 py-2">{{ $contrato->idEstado }}</td>
+                                <td class="px-4 py-2">
+                                    <a href="{{ route('contratos.edit', $contrato->idContrato) }}" class="text-blue-600 hover:underline">Editar</a> |
+                                    <form action="{{ route('contratos.destroy', $contrato->idContrato) }}" method="POST" class="inline-block">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" onclick="return confirm('¿Eliminar este contrato?')" class="text-red-600 hover:underline">
+                                            Eliminar
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
+                        @if ($contratos->isEmpty())
+                            <tr>
+                                <td colspan="10" class="text-center py-4 text-gray-500">No hay contratos registrados.</td>
+                            </tr>
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</x-app-layout>

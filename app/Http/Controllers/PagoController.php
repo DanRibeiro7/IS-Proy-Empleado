@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\contrato;
+use App\Models\Empleado;
 use App\Models\Pago;
 use Illuminate\Http\Request;
 
@@ -12,7 +13,10 @@ class PagoController extends Controller
      */
     public function index()
     {
-        //
+        $pagos = Pago::with('empleado')->get(); // Esto carga los pagos y los empleados relacionados
+
+        // Retornar la vista pasando los pagos obtenidos
+        return view('pagos.index', compact('pagos'));
     }
 
     /**
@@ -20,7 +24,10 @@ class PagoController extends Controller
      */
     public function create()
     {
-        //
+        $empleados = Empleado::all(); // Recupera solo los empleados
+
+        // Retornar la vista de creación pasando los empleados
+        return view('pagos.create', compact('empleados'));
     }
 
     /**
@@ -55,7 +62,7 @@ class PagoController extends Controller
      */
     public function show(Pago $pago)
     {
-        //
+        return view('pagos.show', compact('pago'));
     }
 
     /**
