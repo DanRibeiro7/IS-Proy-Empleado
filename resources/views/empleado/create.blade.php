@@ -16,11 +16,7 @@
                 @endif
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label for="codEmpleado" class="block font-medium text-sm text-gray-700">Código</label>
-                        <input type="text" name="codEmpleado" class="form-input w-full" disabled readonly
-                            value="{{ old('codEmpleado', $empleado->codEmpleado ?? '') }}">
-                    </div>
+                
 
                     <div>
                         <label for="dni" class="block font-medium text-sm text-gray-700">DNI</label>
@@ -46,12 +42,15 @@
                             value="{{ old('apeMaterno', $empleado->apeMaterno ?? '') }}">
                     </div>
 
-                    <div>
-                        <label for="fechaNacimiento" class="block font-medium text-sm text-gray-700">Fecha de
-                            Nacimiento</label>
-                        <input type="date" name="fechaNacimiento" class="form-input w-full"
+                        <div>
+                        <label for="fechaNacimiento" class="block font-medium text-sm text-gray-700">Fecha de Nacimiento</label>
+                        <input type="date" name="fechaNacimiento" id="fechaNacimiento" class="form-input w-full"
                             value="{{ old('fechaNacimiento', $empleado->fechaNacimiento ?? '') }}">
                     </div>
+                             <div>
+                                <label for="edad" class="block font-medium text-sm text-gray-700">Edad</label>
+                                <input type="text" id="edad" class="form-input w-full bg-gray-100" readonly>
+                            </div>
 
                     <div>
                         <label for="genero" class="block font-medium text-sm text-gray-700">Género</label>
@@ -127,4 +126,22 @@
             </form>
         </div>
     </div>
+
+    <script>
+    document.getElementById('fechaNacimiento').addEventListener('change', function () {
+        const fechaNacimiento = new Date(this.value);
+        const hoy = new Date();
+        let edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
+        const mes = hoy.getMonth() - fechaNacimiento.getMonth();
+
+        // Ajustar la edad si el mes actual es anterior al mes de nacimiento
+        // o si es el mismo mes pero el día actual es anterior al día de nacimiento
+        if (mes < 0 || (mes === 0 && hoy.getDate() < fechaNacimiento.getDate())) {
+            edad--;
+        }
+
+        // Mostrar la edad en el campo de solo lectura
+        document.getElementById('edad').value = edad >= 0 ? edad : '';
+    });
+</script>
 </x-app-layout>

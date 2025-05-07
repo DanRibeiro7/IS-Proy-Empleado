@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pago extends Model
 {
+     public function empleado()
+    {
+        return $this->belongsTo(Empleado::class);
+    }
     protected $table = 'pago';
     protected $primaryKey = 'idPago';
     protected $fillable = [
@@ -19,4 +23,5 @@ class Pago extends Model
         'fechacreacion',
     ];
     public $timestamps = false;
+
 }

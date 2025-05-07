@@ -27,20 +27,20 @@
                         @foreach ($pagos as $pago)
                             <tr class="border-t">
                                 <td class="px-4 py-2">{{ $pago->codigo_pago }}</td>
-                                <td class="px-4 py-2">{{ $pago->empleado->nombre }}</td>  <!-- Asumiendo que tienes la relación con Empleado -->
+                                <td class="px-4 py-2">{{ $pago->empleado?->nombre ?? 'Sin asignar' }}</td></td>  <!-- Asumiendo que tienes la relación con Empleado -->
                                 <td class="px-4 py-2">{{ $pago->monto }}</td>
                                 <td class="px-4 py-2">{{ $pago->fechaPago }}</td>
                                 <td class="px-4 py-2">{{ $pago->tipoPago }}</td>
                                 <td class="px-4 py-2">{{ $pago->descripcion ?? 'N/A' }}</td>
                                 <td class="px-4 py-2">
-                                    <a href="{{ route('pagos.edit', $pago->id) }}" class="text-blue-600 hover:underline">Editar</a> |
-                                    <form action="{{ route('pagos.destroy', $pago->id) }}" method="POST" class="inline-block">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" onclick="return confirm('¿Eliminar este pago?')" class="text-red-600 hover:underline">
-                                            Eliminar
-                                        </button>
-                                    </form>
+                                <a href="{{ route('pagos.edit', $pago->id ?? 0) }}" class="text-blue-600 hover:underline">Editar</a>                                   
+                                <form action="{{ route('pagos.destroy', $pago->id ?? 0) }}" method="POST" class="inline-block">
+                                @csrf
+                                    @method('DELETE')
+                                    <button type="submit" onclick="return confirm('¿Eliminar este pago?')" class="text-red-600 hover:underline">
+                                        Eliminar
+                                    </button>
+                                </form>
                                 </td>
                             </tr>
                         @endforeach

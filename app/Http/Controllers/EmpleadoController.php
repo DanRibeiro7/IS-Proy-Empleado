@@ -6,15 +6,68 @@ use App\Models\Empleado;
 use App\Models\EstadoCivil;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
+
 
 class EmpleadoController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+
+     public function ficha($id)
+{
+    $empleado = Empleado::with('estado_civil')->findOrFail($id);
+
+    // Calcular antigüedad
+    if ($empleado->fechaCreacion) {
+        $fechaCreacion = Carbon::parse($empleado->fechaCreacion);
+        $hoy = Carbon::now();
+        $antiguedad = $fechaCreacion->diff($hoy)->format('%y años, %m meses, %d días');
+    } else {
+        $antiguedad = 'Sin fecha de creación';
+    }
+
+    // Calcular beneficios laborales
+    $beneficios = [];
+    if ($empleado->fechaCreacion) {
+        $años = $fechaCreacion->diffInYears($hoy);
+
+        // Gratificaciones
+        $beneficios['Gratificación de Julio'] = 'Sí';
+        $beneficios['Gratificación de Diciembre'] = 'Sí';
+
+        // Vacaciones
+        $beneficios['Vacaciones'] = $años >= 1 ? 'Sí' : 'No';
+
+        // CTS (Compensación por Tiempo de Servicios)
+        $beneficios['CTS'] = $años >= 1 ? 'Sí' : 'No';
+    } else {
+        $beneficios['Gratificación de Julio'] = 'No aplica';
+        $beneficios['Gratificación de Diciembre'] = 'No aplica';
+        $beneficios['Vacaciones'] = 'No aplica';
+        $beneficios['CTS'] = 'No aplica';
+    }
+
+    return view('empleado.ficha', compact('empleado', 'antiguedad', 'beneficios'));
+}
     public function index()
     {
         $empleados = Empleado::with("estado_civil")->get();
+        return view('empleado.index', compact('empleados'));
+        foreach ($empleados as $empleado) {
+            if ($empleado->fechaCreacion) {
+                $fechaCreacion = Carbon::parse($empleado->fechaCreacion);
+                $hoy = Carbon::now();
+    
+                // Calcular la diferencia en años, meses y días
+                $empleado->antiguedad = $fechaCreacion->diff($hoy)->format('%y años, %m meses, %d días');
+            } else {
+                $empleado->antiguedad = 'Sin fecha de creación';
+            }
+        }
+    
+    
         return view('empleado.index', compact('empleados'));
     }
 
@@ -36,9 +89,9 @@ class EmpleadoController extends Controller
         $request->validate([
             //'codEmpleado' => 'required|unique:empleado',
             'dni' => 'required|unique:empleado',
-            'nombres' => 'required',
-            'apePaterno' => 'required',
-            'apeMaterno' => 'required',
+            'nombres' => ['required', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
+            'apePaterno' => ['required', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
+            'apeMaterno' => ['required', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
             'fechaNacimiento' => 'required|date',
             'genero' => 'required',
             'idEstCivil' => 'required',
@@ -71,7 +124,7 @@ class EmpleadoController extends Controller
             'correo' => $request->correo,
             'photoUrl' => $rutaImagen,
             'idEstado' => $request->idEstado,
-            'fechacreacion' => now(),
+            'fechaCreacion' => now(),
         ]);
 
 

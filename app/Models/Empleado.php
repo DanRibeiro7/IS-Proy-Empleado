@@ -21,7 +21,7 @@ class Empleado extends Model
         'numCelular',
         'correo',
         'photoUrl',
-        'fechacreacion',
+        'fechaCreacion',
         'idEstado',
     ];
     public $timestamps = false;

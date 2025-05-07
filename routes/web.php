@@ -19,7 +19,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::resource('empleados', EmpleadoController::class);
-    
+    Route::get('/empleados/{id}/ficha', [EmpleadoController::class, 'ficha'])->name('empleados.ficha');
     
     Route::resource('contratos', ContratoController::class);
     Route::resource('pagos', PagoController::class);
