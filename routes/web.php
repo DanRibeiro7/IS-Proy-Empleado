@@ -19,6 +19,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::resource('empleados', EmpleadoController::class);
+    
+    
     Route::resource('contratos', ContratoController::class);
     Route::resource('pagos', PagoController::class);
     Route::get('pagos/create', [PagoController::class, 'create'])->name('pagos.create');

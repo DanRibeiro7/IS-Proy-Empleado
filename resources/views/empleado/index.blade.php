@@ -19,6 +19,7 @@
                             <th class="px-4 py-2">DNI</th>
                             <th class="px-4 py-2">Nombres</th>
                             <th class="px-4 py-2">Apellidos</th>
+                            <th class="px-4 py-2">Estado Civil</th>
                             <th class="px-4 py-2">Correo</th>
                             <th class="px-4 py-2">Acciones</th>
                         </tr>
@@ -30,6 +31,7 @@
                                 <td class="px-4 py-2">{{ $empleado->dni }}</td>
                                 <td class="px-4 py-2">{{ $empleado->nombres }}</td>
                                 <td class="px-4 py-2">{{ $empleado->apePaterno }} {{ $empleado->apeMaterno }}</td>
+                                <td class="px-4 py-2">{{ $empleado->estado_civil->nombreEstado }}</td>
                                 <td class="px-4 py-2">{{ $empleado->correo }}</td>
                                 <td class="px-4 py-2">
                                     <a href="{{ route('empleados.edit', $empleado->idEmpleado) }}" class="text-blue-600 hover:underline">Editar</a> |

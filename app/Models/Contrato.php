@@ -21,4 +21,9 @@ class Contrato extends Model
         'fechacreacion',
     ];
     public $timestamps = false;
+    protected $casts = [
+        'fechaInicio' => 'date',
+        'fechaFin' => 'date'
+
+    ];
 }

@@ -18,31 +18,31 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label for="codEmpleado" class="block font-medium text-sm text-gray-700">Código</label>
-                        <input type="text" name="codEmpleado" class="form-input w-full"
+                        <input type="text" name="codEmpleado" class="form-input w-full" disabled readonly
                             value="{{ old('codEmpleado', $empleado->codEmpleado ?? '') }}">
                     </div>
 
                     <div>
                         <label for="dni" class="block font-medium text-sm text-gray-700">DNI</label>
-                        <input type="text" name="dni" class="form-input w-full"
+                        <input type="text" name="dni" class="form-input w-full" maxlength="8"
                             value="{{ old('dni', $empleado->dni ?? '') }}">
                     </div>
 
                     <div>
                         <label for="nombres" class="block font-medium text-sm text-gray-700">Nombres</label>
-                        <input type="text" name="nombres" class="form-input w-full"
+                        <input type="text" name="nombres" class="form-input w-full" maxlength="25"
                             value="{{ old('nombres', $empleado->nombres ?? '') }}">
                     </div>
 
                     <div>
                         <label for="apePaterno" class="block font-medium text-sm text-gray-700">Apellido Paterno</label>
-                        <input type="text" name="apePaterno" class="form-input w-full"
+                        <input type="text" name="apePaterno" class="form-input w-full" maxlength="25"
                             value="{{ old('apePaterno', $empleado->apePaterno ?? '') }}">
                     </div>
 
                     <div>
                         <label for="apeMaterno" class="block font-medium text-sm text-gray-700">Apellido Materno</label>
-                        <input type="text" name="apeMaterno" class="form-input w-full"
+                        <input type="text" name="apeMaterno" class="form-input w-full" maxlength="25"
                             value="{{ old('apeMaterno', $empleado->apeMaterno ?? '') }}">
                     </div>
 
@@ -78,25 +78,25 @@
 
                     <div>
                         <label for="direccion" class="block font-medium text-sm text-gray-700">Dirección</label>
-                        <input type="text" name="direccion" class="form-input w-full"
+                        <input type="text" name="direccion" class="form-input w-full" maxlength="50"
                             value="{{ old('direccion', $empleado->direccion ?? '') }}">
                     </div>
 
                     <div>
                         <label for="numCelular" class="block font-medium text-sm text-gray-700">Celular</label>
-                        <input type="text" name="numCelular" class="form-input w-full"
+                        <input type="text" name="numCelular" class="form-input w-full" maxlength="9"
                             value="{{ old('numCelular', $empleado->numCelular ?? '') }}">
                     </div>
 
                     <div>
                         <label for="correo" class="block font-medium text-sm text-gray-700">Correo</label>
-                        <input type="email" name="correo" class="form-input w-full"
+                        <input type="email" name="correo" class="form-input w-full" maxlength="50"
                             value="{{ old('correo', $empleado->correo ?? '') }}">
                     </div>
 
                     <div>
                         <label for="photoUrl" class="block font-medium text-sm text-gray-700">URL de Foto</label>
-                        <input type="text" name="photoUrl" class="form-input w-full"
+                        <input type="text" name="photoUrl" class="form-input w-full" maxlength="50"
                             value="{{ old('photoUrl', $empleado->photoUrl ?? '') }}">
                     </div>
 

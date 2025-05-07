@@ -25,4 +25,11 @@ class Empleado extends Model
         'idEstado',
     ];
     public $timestamps = false;
+
+    public function estado_civil(){
+        
+                return $this->belongsTo(EstadoCivil::class, 'idEstCivil');
+        
+        
+        }
 }

@@ -5,6 +5,7 @@ use App\Models\Estado;
 use App\Models\Empleado;
 use App\Models\EstadoCivil;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class EmpleadoController extends Controller
 {
@@ -13,7 +14,7 @@ class EmpleadoController extends Controller
      */
     public function index()
     {
-        $empleados = Empleado::all();
+        $empleados = Empleado::with("estado_civil")->get();
         return view('empleado.index', compact('empleados'));
     }
 
@@ -33,7 +34,7 @@ class EmpleadoController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'codEmpleado' => 'required|unique:empleado',
+            //'codEmpleado' => 'required|unique:empleado',
             'dni' => 'required|unique:empleado',
             'nombres' => 'required',
             'apePaterno' => 'required',
@@ -49,7 +50,7 @@ class EmpleadoController extends Controller
         ]);
 
         Empleado::create([
-            'codEmpleado' => $request->codEmpleado,
+            'codEmpleado' => Str::random(10),//$request->codEmpleado,
             'dni' => $request->dni,
             'nombres' => $request->nombres,
             'apePaterno' => $request->apePaterno,
@@ -81,7 +82,11 @@ class EmpleadoController extends Controller
      */
     public function edit(Empleado $empleado)
     {
-        return view('empleado.edit', compact('empleado'));
+        $estados_civiles = EstadoCivil::all(); // Obtener todos los estados civiles
+        $estados = Estado::all(); // Obtener todos los estados
+
+        // Pasar los datos a la vista
+        return view('empleado.edit', compact('empleado', 'estados_civiles', 'estados'));
     }
 
     /**
@@ -90,8 +95,8 @@ class EmpleadoController extends Controller
     public function update(Request $request, Empleado $empleado)
     {
         $request->validate([
-            'codEmpleado' => 'required|unique:empleados,codEmpleado,' . $empleado->idEmpleado . ',idEmpleado',
-            'dni' => 'required|unique:empleados,dni,' . $empleado->idEmpleado . ',idEmpleado',
+            'codEmpleado' => 'required|unique:empleado,codEmpleado,' . $empleado->idEmpleado . ',idEmpleado',
+            'dni' => 'required|unique:empleado,dni,' . $empleado->idEmpleado . ',idEmpleado',
             'nombres' => 'required',
             'apePaterno' => 'required',
             'apeMaterno' => 'required',
@@ -101,7 +106,7 @@ class EmpleadoController extends Controller
             'direccion' => 'required',
             'numCelular' => 'required',
             'correo' => 'required|email',
-            'photoUrl' => 'nullable|url',
+            'photoUrl' => 'nullable',
             'idEstado' => 'required',
         ]);
 

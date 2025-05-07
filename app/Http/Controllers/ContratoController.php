@@ -40,22 +40,40 @@ class ContratoController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            //'codEmpleado' => 'required|unique:empleado',
+            'idEmpleado' => 'required',
+            'idArea' => 'required',
+            'idModalidad' => 'required',
+            'idJornada' => 'required',
+            'codContrato' => 'required',
+            'fechaInicio' => 'required',
+            'fechaFin' => 'required',
+            'idEstado' => 'required',
+            'horasLaboral' => 'required',
+            'fechacreacion' => 'required',
+            
+        ]);
         //// Crear un nuevo contrato usando los datos validados
-Contrato::create([
-    'idEmpleado'    => $request->idEmpleado,
-    'idArea'        => $request->idArea,
-    'idModalidad'   => $request->idModalidad,
-    'idJornada'     => $request->idJornada,
-    'codContrato'   => $request->codContrato,
-    'fechaInicio'   => $request->fechaInicio,
-    'fechaFin'      => $request->fechaFin,
-    'idEstado'      => $request->idEstado,
-    'horasLaboral'  => $request->horasLaboral,
-    'fechacreacion' => $request->fechacreacion,
-]);
+        $contrato= Contrato::create([
+            
+            'idEmpleado'    => $request->idEmpleado,
+            'idArea'        => $request->idArea,
+            'idModalidad'   => $request->idModalidad,
+            'idJornada'     => $request->idJornada,
+            'codContrato'   => $request->codContrato,
+            'fechaInicio'   => $request->fechaInicio,
+            'fechaFin'      => $request->fechaFin,
+            'idEstado'      => $request->idEstado,
+            'horasLaboral'  => $request->horasLaboral,
+            'fechacreacion' => $request->fechacreacion,
+        ]);
+        $fechainicio=$contrato->fechaInicio;
+        $fechaFin=$contrato->fechaFin;
 
-// Redirigir a la lista de contratos con un mensaje de éxito
-return redirect()->route('contratos.index')->with('success', 'Contrato creado con éxito.');
+
+
+        return redirect()->route('contratos.index')->with('success', 'Contrato creado con éxito.');
     }
 
     /**
