@@ -9,7 +9,7 @@
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 bg-white p-6 shadow rounded-lg">
             <form
                 action="{{ isset($empleado) ? route('empleados.update', $empleado->idEmpleado) : route('empleados.store') }}"
-                method="POST">
+                method="POST" enctype="multipart/form-data">
                 @csrf
                 @if(isset($empleado))
                 @method('PUT')
@@ -95,9 +95,11 @@
                     </div>
 
                     <div>
-                        <label for="photoUrl" class="block font-medium text-sm text-gray-700">URL de Foto</label>
-                        <input type="text" name="photoUrl" class="form-input w-full" maxlength="50"
-                            value="{{ old('photoUrl', $empleado->photoUrl ?? '') }}">
+                        <label for="photo" class="block font-medium text-sm text-gray-700">Foto</label>
+                        <input type="file" name="photo" class="form-input w-full">
+                        @if (isset($empleado) && $empleado->photoUrl)
+                            <img src="{{ asset('storage/' . $empleado->photoUrl) }}" alt="Foto del Empleado" class="mt-2 w-24 h-24 object-cover">
+                        @endif
                     </div>
 
 

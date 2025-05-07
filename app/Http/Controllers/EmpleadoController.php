@@ -47,7 +47,15 @@ class EmpleadoController extends Controller
             'correo' => 'required|email',
             'photoUrl' => 'nullable',
             'idEstado' => 'required',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validar la foto
         ]);
+
+         // Si hay archivo de foto, manejar la carga
+         if ($request->hasFile('photo')) {
+            $rutaImagen = $request->file('photo')->store('imagenes', 'public'); // Guarda en storage/app/public/imagenes
+        } else {
+            $rutaImagen = null; // Si no se sube imagen, se guarda como null
+        }
 
         Empleado::create([
             'codEmpleado' => Str::random(10),//$request->codEmpleado,
@@ -61,10 +69,11 @@ class EmpleadoController extends Controller
             'direccion' => $request->direccion,
             'numCelular' => $request->numCelular,
             'correo' => $request->correo,
-            'photoUrl' => $request->photoUrl,
+            'photoUrl' => $rutaImagen,
             'idEstado' => $request->idEstado,
             'fechacreacion' => now(),
         ]);
+
 
         return redirect()->route('empleados.index')->with('success', 'Empleado creado con éxito.');
     }
