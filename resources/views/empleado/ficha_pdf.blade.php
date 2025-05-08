@@ -8,8 +8,7 @@
     </style>
 </head>
 <body>
-
+    <h1>Hola, {{ $nombre }}</h1>
     <p>Este es un PDF generado desde Blade en Laravel 12.</p>
-    <p>{{$empleado->nombres}}</p>
 </body>
 </html>

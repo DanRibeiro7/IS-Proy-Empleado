@@ -53,6 +53,9 @@
                                             Eliminar
                                         </button>
                                     </form>
+                                    <a href="{{ route('empleado.pdf', ['id' => $empleado->idEmpleado]) }}" target="_blank">
+                                    Ver PDF del Empleado
+                                    </a>
                                 </td>
                             </tr>
                         @endforeach

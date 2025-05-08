@@ -7,6 +7,7 @@ use App\Models\EstadoCivil;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 
 class EmpleadoController extends Controller
@@ -14,8 +15,8 @@ class EmpleadoController extends Controller
     /**
      * Display a listing of the resource.
      */
-
-     public function ficha($id)
+   
+    public function fichabeneficios($id)
 {
     $empleado = Empleado::with('estado_civil')->findOrFail($id);
 
@@ -89,9 +90,9 @@ class EmpleadoController extends Controller
         $request->validate([
             //'codEmpleado' => 'required|unique:empleado',
             'dni' => 'required|unique:empleado',
-            'nombres' => ['required', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
-            'apePaterno' => ['required', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
-            'apeMaterno' => ['required', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
+            'nombres' => 'required',
+            'apePaterno' => 'required',
+            'apeMaterno' => 'required',
             'fechaNacimiento' => 'required|date',
             'genero' => 'required',
             'idEstCivil' => 'required',
@@ -124,7 +125,7 @@ class EmpleadoController extends Controller
             'correo' => $request->correo,
             'photoUrl' => $rutaImagen,
             'idEstado' => $request->idEstado,
-            'fechaCreacion' => now(),
+            'fechacreacion' => now(),
         ]);
 
 
@@ -199,4 +200,12 @@ class EmpleadoController extends Controller
         $empleado->delete();
         return redirect()->route('empleados.index')->with('success', 'Empleado eliminado correctamente.');
     }
+    
+            public function generarPdf($id)
+            {
+                $empleado = Empleado::findOrFail($id);
+                $pdf = Pdf::loadView('empleado.ficha', ['empleado' => $empleado]);
+    
+                return $pdf->download('reporte_empleado.pdf');
+            }
 }

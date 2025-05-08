@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EmpleadoController;
 use App\Http\Controllers\ContratoController;
 use App\Http\Controllers\pagoController;
+use App\Models\Empleado;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -20,11 +22,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::resource('empleados', EmpleadoController::class);
     Route::get('/empleados/{id}/ficha', [EmpleadoController::class, 'ficha'])->name('empleados.ficha');
-    
+    Route::get('/empleado/ficha/{id}', [EmpleadoController::class, 'mostrarFicha']);
     Route::resource('contratos', ContratoController::class);
     Route::resource('pagos', PagoController::class);
     Route::get('pagos/create', [PagoController::class, 'create'])->name('pagos.create');
     Route::post('pagos', [PagoController::class, 'store'])->name('pagos.store');
+    Route::get('/empleado/pdf/{id}', [EmpleadoController::class, 'generarPdf'])->name('empleado.pdf');
+
 });
 
 require __DIR__.'/auth.php';
