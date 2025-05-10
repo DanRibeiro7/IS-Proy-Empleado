@@ -1,9 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
+use Barryvdh\DomPDF\Facade as PDF;
 use App\Models\contrato;
-use App\Models\Empleado;
 use App\Models\Pago;
+use App\Models\Banco;
+
 use Illuminate\Http\Request;
 
 class PagoController extends Controller
@@ -12,22 +14,37 @@ class PagoController extends Controller
      * Display a listing of the resource.
      */
     public function index()
+{
+    $contratos = Contrato::with('empleado')->get();
+    return view('pago.index', compact('contratos'));
+}
+    public function generatePDF($id)
     {
-        $pagos = Pago::with('empleado')->get(); // Esto carga los pagos y los empleados relacionados
-
-        // Retornar la vista pasando los pagos obtenidos
-        return view('pagos.index', compact('pagos'));
+        // Obtener el pago y el contrato
+        $pago = Pago::with('contrato')->find($id);
+    
+        // Verificar si el pago existe
+        if(!$pago) {
+            return redirect()->back()->with('error', 'Pago no encontrado');
+        }
+    
+        try {
+            $pdf = PDF::loadView('pago.boleta', compact('pago'));
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error al generar el PDF: ' . $e->getMessage());
+        }
     }
+        
 
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        $empleados = Empleado::all(); // Recupera solo los empleados
-
-        // Retornar la vista de creación pasando los empleados
-        return view('pagos.create', compact('empleados'));
+        // En este caso no se necesitan datos relacionados con empleado ni otros
+        $contratos=Contrato::all();
+        $bancos=Banco::whereIn('idBanco',[1,2])->get();
+        return view('pago.create');
     }
 
     /**
@@ -37,24 +54,30 @@ class PagoController extends Controller
     {
         // Validar los datos del formulario
         $request->validate([
-            'idEmpleado' => 'required|exists:empleados,idEmpleado',  // Verifica que el idEmpleado exista en la tabla empleados
-            'monto' => 'required|numeric|min:0', // Verifica que el monto sea un número y sea mayor o igual a 0
+            'idContrato' => 'required|exists:contratos,idContrato', // Asegúrate que el contrato exista
+            'idBanco' => 'required|exists:bancos,idBanco',  // Verifica que el banco exista
+            'numCuenta' => 'required|string', // Verifica que el número de cuenta sea una cadena
             'fechaPago' => 'required|date',  // Verifica que la fecha sea válida
-            'tipoPago' => 'required|string', // Verifica que tipoPago sea una cadena de texto
-            'descripcion' => 'nullable|string', // Descripción es opcional, si está presente debe ser texto
+            'estado' => 'required|string', // Verifica que el estado sea una cadena
+            'monto' => 'required|numeric|min:0', // Verifica que el monto sea un número y sea mayor o igual a 0
+            'gratificacion' => 'nullable|numeric', // Verifica que la gratificación sea opcional y un número
+            'fechacreacion' => 'required|date', // Verifica que la fecha de creación sea válida
         ]);
     
-        // Crear un nuevo pago usando los datos validados
+        // Crear un nuevo pago con los datos validados
         Pago::create([
-            'idEmpleado' => $request->idEmpleado,
-            'monto' => $request->monto,
+            'idContrato' => $request->idContrato,
+            'idBanco' => $request->idBanco,
+            'numCuenta' => $request->numCuenta,
             'fechaPago' => $request->fechaPago,
-            'tipoPago' => $request->tipoPago,
-            'descripcion' => $request->descripcion, // Descripción es opcional, por lo tanto no es obligatorio
+            'estado' => $request->estado,
+            'monto' => $request->monto,
+            'gratificacion' => $request->gratificacion, // Gratificación es opcional
+            'fechacreacion' => $request->fechacreacion,
         ]);
     
         // Redirigir a la lista de pagos con un mensaje de éxito
-        return redirect()->route('pagos.index')->with('success', 'Pago creado con éxito.');
+        return redirect()->route('pago.index')->with('success', 'Pago creado con éxito.');
     }
 
     /**
@@ -62,7 +85,7 @@ class PagoController extends Controller
      */
     public function show(Pago $pago)
     {
-        return view('pagos.show', compact('pago'));
+        return view('pago.show', compact('pago'));
     }
 
     /**
@@ -70,41 +93,68 @@ class PagoController extends Controller
      */
     public function edit(Pago $pago)
     {
-        //
+        return view('pago.edit', compact('pago'));
     }
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, Pago $pago)
-{
-    // Validar los datos del formulario
-    $request->validate([
-        'idEmpleado' => 'required|exists:empleados,idEmpleado',  // Verifica que el idEmpleado exista en la tabla empleados
-        'monto' => 'required|numeric|min:0', // Verifica que el monto sea un número y sea mayor o igual a 0
-        'fechaPago' => 'required|date',  // Verifica que la fecha sea válida
-        'tipoPago' => 'required|string', // Verifica que tipoPago sea una cadena de texto
-        'descripcion' => 'nullable|string', // Descripción es opcional, si está presente debe ser texto
-    ]);
+    {
+        // Validar los datos del formulario
+        $request->validate([
+            'idContrato' => 'required|exists:contratos,idContrato',
+            'idBanco' => 'required|exists:bancos,idBanco',
+            'numCuenta' => 'required|string',
+            'fechaPago' => 'required|date',
+            'estado' => 'required|string',
+            'monto' => 'required|numeric|min:0',
+            'gratificacion' => 'nullable|numeric',
+            'fechacreacion' => 'required|date',
+        ]);
 
-    // Actualizar el pago con los nuevos datos
-    $pago->update([
-        'idEmpleado' => $request->idEmpleado,
-        'monto' => $request->monto,
-        'fechaPago' => $request->fechaPago,
-        'tipoPago' => $request->tipoPago,
-        'descripcion' => $request->descripcion, // Descripción es opcional, por lo tanto no es obligatorio
-    ]);
+        // Actualizar el pago con los nuevos datos
+        $pago->update([
+            'idContrato' => $request->idContrato,
+            'idBanco' => $request->idBanco,
+            'numCuenta' => $request->numCuenta,
+            'fechaPago' => $request->fechaPago,
+            'estado' => $request->estado,
+            'monto' => $request->monto,
+            'gratificacion' => $request->gratificacion,
+            'fechacreacion' => $request->fechacreacion,
+        ]);
 
-    // Redirigir a la lista de pagos con un mensaje de éxito
-    return redirect()->route('pagos.index')->with('success', 'Pago actualizado con éxito.');
-}
+        // Redirigir a la lista de pagos con un mensaje de éxito
+        return redirect()->route('pago.index')->with('success', 'Pago actualizado con éxito.');
+    }
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Pago $pago)
     {
-        //
+        // Eliminar el pago
+        $pago->delete();
+
+        // Redirigir a la lista de pagos con un mensaje de éxito
+        return redirect()->route('pago.index')->with('success', 'Pago eliminado con éxito.');
     }
+   public function pagosPorContrato($idContrato)
+{
+    $contrato = Contrato::with('empleado')->findOrFail($idContrato);
+
+    // Carga todos los pagos del contrato, incluyendo la relación con el banco
+    $pagos = Pago::with('banco')
+        ->where('idContrato', $idContrato)
+        ->get();
+
+    return view('pago.index_por_contrato', compact('contrato', 'pagos'));
+}
+public function seleccionarContrato()
+{
+    $contratos = \App\Models\Contrato::with('empleado')->get();
+    return view('pago.seleccionar_contrato', compact('contratos'));
+}
+
 }

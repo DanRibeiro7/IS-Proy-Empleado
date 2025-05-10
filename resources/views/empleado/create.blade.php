@@ -1,3 +1,12 @@
+@if ($errors->any())
+    <div class="text-red-600">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -16,11 +25,7 @@
                 @endif
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label for="codEmpleado" class="block font-medium text-sm text-gray-700">Código</label>
-                        <input type="text" name="codEmpleado" class="form-input w-full" disabled readonly
-                            value="{{ old('codEmpleado', $empleado->codEmpleado ?? '') }}">
-                    </div>
+                   
 
                     <div>
                         <label for="dni" class="block font-medium text-sm text-gray-700">DNI</label>

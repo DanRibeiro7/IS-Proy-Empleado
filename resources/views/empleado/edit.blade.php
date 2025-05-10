@@ -1,3 +1,12 @@
+@if ($errors->any())
+    <div class="text-red-600">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-2xl text-gray-800 leading-tight">
@@ -8,7 +17,8 @@
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
-                <form action="{{ isset($empleado) ? route('empleados.update', $empleado->idEmpleado) : route('empleados.store') }}" method="POST">
+            <form action="{{ isset($empleado) ? route('empleados.update', $empleado->idEmpleado) : route('empleados.store') }}" method="POST" enctype="multipart/form-data">
+
                     @csrf
                     @if(isset($empleado))
                         @method('PUT')
@@ -118,15 +128,20 @@
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
+           <!-- Foto -->
+    <div class="mb-6">
+        <label for="photo" class="block text-sm font-semibold text-gray-700">Foto</label>
+        <input type="file" name="photo" class="form-input w-full">
+        @error('photo')
+            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+        @enderror
 
-                        <!-- Foto URL -->
-                        <div class="mb-6">
-                            <label for="photoUrl" class="block text-sm font-semibold text-gray-700">Foto URL</label>
-                            <input type="text" name="photoUrl" class="form-input w-full" maxlength="50" value="{{ old('photoUrl', $empleado->photoUrl ?? '') }}">
-                            @error('photoUrl')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
+        @if (isset($empleado) && $empleado->photoUrl)
+        <img src="{{ asset('storage/' . $empleado->photoUrl) }}" alt="Foto del Empleado" class="mt-2 object-cover rounded" style="width: 50px; height: 50px;">
+
+
+        @endif
+    </div>
 
                         <!-- Estado -->
                         <div class="mb-6">

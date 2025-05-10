@@ -15,6 +15,9 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('areas.index')" :active="request()->routeIs('areas')">
+                        Areas
+                    </x-nav-link>
                     <x-nav-link :href="route('empleados.index')" :active="request()->routeIs('empleados')">
                         Empleados
                     </x-nav-link>
@@ -23,6 +26,9 @@
                     </x-nav-link>
                     <x-nav-link :href="route('pagos.index')" :active="request()->routeIs('pagos')">
                         Pagos
+                    </x-nav-link>
+                     <x-nav-link :href="route('pagos.index')" :active="request()->routeIs('pagos')">
+                        Reportes
                     </x-nav-link>
                 </div>
             </div>

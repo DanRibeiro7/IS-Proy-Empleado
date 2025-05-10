@@ -13,3 +13,4 @@ class Banco extends Model
     ];
     public $timestamps = false;
 }
+

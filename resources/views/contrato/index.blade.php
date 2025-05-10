@@ -18,7 +18,7 @@
                             <th class="px-4 py-2">Empleado (ID)</th>
                             <th class="px-4 py-2">Área</th>
                             <th class="px-4 py-2">Modalidad</th>
-                            <th class="px-4 py-2">Jornada</th>
+                            
                             <th class="px-4 py-2">Fecha Inicio</th>
                             <th class="px-4 py-2">Fecha Fin</th>
                             <th class="px-4 py-2">Horas</th>
@@ -29,15 +29,16 @@
                     <tbody>
                         @foreach ($contratos as $contrato)
                             <tr class="border-t">
-                                <td class="px-4 py-2">{{ $contrato->codContrato }}</td>
-                                <td class="px-4 py-2">{{ $contrato->idEmpleado }}</td>
-                                <td class="px-4 py-2">{{ $contrato->idArea }}</td>
-                                <td class="px-4 py-2">{{ $contrato->idModalidad }}</td>
-                                <td class="px-4 py-2">{{ $contrato->idJornada }}</td>
+                                <td class="px-4 py-2">{{ $contrato->idContrato }}</td>
+                                <td class="px-4 py-2"> {{ $contrato->empleado->dni ?? 'Sin DNI' }} | {{ $contrato->empleado->apePaterno ?? '' }} </td>
+                               <td class="px-4 py-2">{{ $contrato->area->nomArea ?? 'Sin área' }}</td> 
+                               <td class="px-4 py-2">{{ $contrato->modalidad->nomModalidad ?? 'Sin modalidad' }}</td>
+                                
+                             
                                 <td class="px-4 py-2">{{ $contrato->fechaInicio }}</td>
                                 <td class="px-4 py-2">{{ $contrato->fechaFin }}</td>
                                 <td class="px-4 py-2">{{ $contrato->horasLaboral }}</td>
-                                <td class="px-4 py-2">{{ $contrato->idEstado }}</td>
+                                <td class="px-4 py-2">{{ $contrato->estado->nomEstado ?? 'Sin estado' }}</td>
                                 <td class="px-4 py-2">
                                     <a href="{{ route('contratos.edit', $contrato->idContrato) }}" class="text-blue-600 hover:underline">Editar</a> |
                                     <form action="{{ route('contratos.destroy', $contrato->idContrato) }}" method="POST" class="inline-block">

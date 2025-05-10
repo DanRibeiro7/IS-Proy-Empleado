@@ -13,21 +13,7 @@
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
                 <form action="{{ route('pagos.store') }}" method="POST">
                     @csrf
-<!-- Selección de Empleado -->
-<div class="mb-6">
-    <label for="idEmpleado" class="block text-sm font-semibold text-gray-700">Empleado</label>
-    <select name="idEmpleado" id="idEmpleado" class="form-input w-full">
-        <option value="" disabled selected>Selecciona un empleado</option>
-        @foreach ($empleados as $empleado)
-            <option value="{{ $empleado->idEmpleado }}">
-                {{ $empleado->dni }} - {{ $empleado->apePaterno }}, {{ $empleado->apeMaterno }}, {{ $empleado->nombres }}
-            </option>
-        @endforeach
-    </select>
-    @error('idEmpleado')
-        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-    @enderror
-</div>
+
 
                   
 

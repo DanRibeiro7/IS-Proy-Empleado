@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pago extends Model
 {
+   
     protected $table = 'pago';
     protected $primaryKey = 'idPago';
     protected $fillable = [
@@ -19,4 +20,13 @@ class Pago extends Model
         'fechacreacion',
     ];
     public $timestamps = false;
+
+    public function contrato()
+{
+    return $this->belongsTo(Contrato::class, 'idContrato');
+}
+public function banco()
+{
+    return $this->belongsTo(\App\Models\Banco::class, 'idBanco');
+}
 }

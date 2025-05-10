@@ -26,4 +26,27 @@ class Contrato extends Model
         'fechaFin' => 'date'
 
     ];
+    public function empleado()
+{
+    return $this->belongsTo(Empleado::class, 'idEmpleado');
+}
+public function area()
+{
+    return $this->belongsTo(Area::class, 'idArea');
+}
+
+public function modalidad()
+{
+    return $this->belongsTo(Modalidad::class, 'idModalidad');
+}
+
+public function jornada()
+{
+    return $this->belongsTo(Jornada::class, 'idJornada');
+}
+
+public function estado()
+{
+    return $this->belongsTo(Estado::class, 'idEstado');
+}
 }

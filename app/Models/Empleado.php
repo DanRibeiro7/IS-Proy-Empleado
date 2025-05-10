@@ -32,4 +32,8 @@ class Empleado extends Model
         
         
         }
+        public function contratos()
+{
+    return $this->hasMany(Contrato::class, 'idEmpleado');
+}
 }

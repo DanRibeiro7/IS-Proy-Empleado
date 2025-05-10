@@ -22,17 +22,18 @@
                             <th class="px-4 py-2">Estado Civil</th>
                             <th class="px-4 py-2">Correo</th>
                             <th class="px-4 py-2">foto</th>
+                            
                             <th class="px-4 py-2">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($empleados as $empleado)
                             <tr class="border-t">
-                                <td class="px-4 py-2">{{ $empleado->codEmpleado }}</td>
+                                <td class="px-4 py-2">{{ $empleado->idEmpleado }}</td>
                                 <td class="px-4 py-2">{{ $empleado->dni }}</td>
                                 <td class="px-4 py-2">{{ $empleado->nombres }}</td>
                                 <td class="px-4 py-2">{{ $empleado->apePaterno }} {{ $empleado->apeMaterno }}</td>
-                                <td class="px-4 py-2">{{ $empleado->estado_civil->nombreEstado }}</td>
+                                <td class="px-4 py-2">{{ $empleado->estado_civil->nombreEstado ?? 'Sin estado civil' }}</td>
                                 <td class="px-4 py-2">{{ $empleado->correo }}</td>
                                 <td class="px-4 py-2">
                                 @if($empleado->photoUrl)
@@ -41,7 +42,9 @@
                                             <p>No hay foto</p>
                                         @endif
                                 </td>
+                               
                                 <td class="px-4 py-2">
+                                    <a href="{{ route('empleados.fichaemp', $empleado->idEmpleado) }}" class="text-blue-600 hover:underline">Ver Ficha</a> |
                                     <a href="{{ route('empleados.edit', $empleado->idEmpleado) }}" class="text-blue-600 hover:underline">Editar</a> |
                                     <form action="{{ route('empleados.destroy', $empleado->idEmpleado) }}" method="POST" class="inline-block">
                                         @csrf
@@ -50,6 +53,9 @@
                                             Eliminar
                                         </button>
                                     </form>
+                                    <a href="{{ route('empleado.pdf', ['id' => $empleado->idEmpleado]) }}" target="_blank">
+                                    Ver PDF del Empleado
+                                    </a>
                                 </td>
                             </tr>
                         @endforeach
