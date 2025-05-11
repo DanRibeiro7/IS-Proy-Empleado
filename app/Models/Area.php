@@ -14,4 +14,10 @@ class Area extends Model
         'cantEmpleados', 
     ];
     public $timestamps = false;
+    public function contratos()
+{
+    return $this->hasMany(\App\Models\Contrato::class, 'idArea', 'idArea');
 }
+
+}
+

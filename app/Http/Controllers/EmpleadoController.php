@@ -118,7 +118,7 @@ if ($empleado->fechaNacimiento) {
         }
 
         Empleado::create([
-            'codEmpleado' => Str::random(10),//$request->codEmpleado,
+            'codEmpleado' => Str::random(4),//$request->codEmpleado,
             'dni' => $request->dni,
             'nombres' => $request->nombres,
             'apePaterno' => $request->apePaterno,
@@ -217,6 +217,8 @@ if ($empleado->fechaNacimiento) {
         $empleado->delete();
         return redirect()->route('empleados.index')->with('success', 'Empleado eliminado correctamente.');
     }
+
+    
     public function generarPdf($id)
     {
         $empleado = Empleado::findOrFail($id);

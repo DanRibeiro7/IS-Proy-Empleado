@@ -36,6 +36,8 @@ Route::middleware('auth')->group(function () {
     
     Route::get('/contratos/{contrato}/pagos', [App\Http\Controllers\PagoController::class, 'pagosPorContrato'])->name('pagos.porContrato');
     Route::get('/pagos/seleccionar_contrato', [PagoController::class, 'seleccionarContrato'])->name('pagos.seleccionarContrato');
+    Route::get('/reportes', [\App\Http\Controllers\ReporteController::class, 'index'])->name('reportes.index');
+
 
      
     

@@ -27,7 +27,7 @@
                     <x-nav-link :href="route('pagos.index')" :active="request()->routeIs('pagos')">
                         Pagos
                     </x-nav-link>
-                     <x-nav-link :href="route('pagos.index')" :active="request()->routeIs('pagos')">
+                     <x-nav-link :href="route('reportes.index')" :active="request()->routeIs('reportes')">
                         Reportes
                     </x-nav-link>
                 </div>

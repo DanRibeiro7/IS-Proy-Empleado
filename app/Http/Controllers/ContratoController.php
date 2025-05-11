@@ -26,13 +26,36 @@ class ContratoController extends Controller
         $estados=Estado::whereIn('idEstado',[1,2])->get(); // O el método que estés utilizando para obtener los contratos
         return view('contrato.index', compact('contratos','areas','modalidades','estados'));
     }
+    private function calcularSalario($idContrato, $fechaPago)
+    {
+        $contrato = \App\Models\Contrato::with('area')->findOrFail($idContrato);
+    
+        $salarioBase = $contrato->area->salario ?? 0;
+        $fecha = \Carbon\Carbon::parse($fechaPago);
+        $mes = $fecha->month;
+    
+        $monto = $salarioBase;
+        $gratificacion = 0;
+    
+        // Si es julio (7) o diciembre (12), aplicar gratificación
+        if ($mes === 7 || $mes === 12) {
+            $monto += 200;
+            $gratificacion = 200;
+        }
+    
+        return [
+            'monto' => $monto,
+            'gratificacion' => $gratificacion
+        ];
+    }
 
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        $empleados = Empleado::all(); // Obtener todos los empleados
+        $empleadosConContrato = Contrato::pluck('idEmpleado')->toArray();
+        $empleados = Empleado::whereNotIn('idEmpleado', $empleadosConContrato)->get(); // Obtener todos los empleados
         $areas = Area::all(); // Obtener todas las áreas
         $modalidades = Modalidad::all(); // Obtener todas las modalidades
         $jornadas = Jornada::all(); // Obtener todas las jornadas
@@ -42,6 +65,7 @@ class ContratoController extends Controller
         // Pasar estas variables a la vista
         return view('contrato.create', compact('empleados', 'areas', 'modalidades', 'jornadas','estados','bancos'));
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -91,14 +115,16 @@ class ContratoController extends Controller
 
         // Ejemplo: crear registros con esas fechas
         foreach ($fechas as $fecha) {
+            $salario = app(\App\Http\Controllers\PagoController::class)->calcularSalario($contrato->idContrato, $fecha);
+
             Pago::create([
                 'idContrato' => $contrato->idContrato,
                 'idBanco' => $request->idBanco, // O el valor que necesites
                 'numCuenta' => $request->numCuenta, // O el valor que necesites
                 'fechaPago' => $fecha,
                 'estado' => 1, // O el valor que necesites
-                'monto' => null, // O el valor que necesites
-                'gratificacion' => null, // O el valor que necesites
+                'monto' => $salario['monto'], // O el valor que necesites
+                'gratificacion' =>  $salario['gratificacion'], // O el valor que necesites
                 'fechacreacion' => now(),
             ]);
         }
@@ -157,4 +183,5 @@ class ContratoController extends Controller
 
         return redirect()->route('contratos.index')->with('success', 'Contrato eliminado exitosamente.');
     }
+   
 }

@@ -32,8 +32,10 @@ class Empleado extends Model
         
         
         }
-        public function contratos()
-{
-    return $this->hasMany(Contrato::class, 'idEmpleado');
-}
+        public function contrato()
+        {
+            return $this->hasOne(\App\Models\Contrato::class, 'idEmpleado', 'idEmpleado');
+        }
+        
+
 }

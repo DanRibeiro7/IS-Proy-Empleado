@@ -18,22 +18,23 @@ class PagoController extends Controller
     $contratos = Contrato::with('empleado')->get();
     return view('pago.index', compact('contratos'));
 }
-    public function generatePDF($id)
-    {
-        // Obtener el pago y el contrato
-        $pago = Pago::with('contrato')->find($id);
-    
-        // Verificar si el pago existe
-        if(!$pago) {
-            return redirect()->back()->with('error', 'Pago no encontrado');
-        }
-    
-        try {
-            $pdf = PDF::loadView('pago.boleta', compact('pago'));
-        } catch (\Exception $e) {
-            return back()->with('error', 'Error al generar el PDF: ' . $e->getMessage());
-        }
+public function generatePDF($id)
+{
+    // Obtener el pago con contrato, banco y empleado
+    $pago = Pago::with(['contrato.empleado', 'banco'])->find($id);
+
+    if (!$pago) {
+        return redirect()->back()->with('error', 'Pago no encontrado');
     }
+
+    try {
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pago.boleta', compact('pago'));
+        return $pdf->download('boleta_pago_' . $pago->id . '.pdf');
+    } catch (\Exception $e) {
+        return back()->with('error', 'Error al generar el PDF: ' . $e->getMessage());
+    }
+}
+
         
 
     /**
@@ -156,5 +157,28 @@ public function seleccionarContrato()
     $contratos = \App\Models\Contrato::with('empleado')->get();
     return view('pago.seleccionar_contrato', compact('contratos'));
 }
+public function calcularSalario($idContrato, $fechaPago)
+{
+    $contrato = \App\Models\Contrato::with('area')->findOrFail($idContrato);
+
+    $salarioBase = $contrato->area->salario ?? 0;
+    $fecha = \Carbon\Carbon::parse($fechaPago);
+    $mes = $fecha->month;
+
+    $monto = $salarioBase;
+    $gratificacion = 0;
+
+    // Si el mes es julio (7) o diciembre (12), agregar bono y gratificación
+    if ($mes === 7 || $mes === 12) {
+        $monto += 200;
+        $gratificacion = 200;
+    }
+
+    return [
+        'monto' => $monto,
+        'gratificacion' => $gratificacion
+    ];
+}
+
 
 }
