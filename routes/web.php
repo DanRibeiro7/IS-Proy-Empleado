@@ -7,6 +7,7 @@ use App\Http\Controllers\EmpleadoController;
 use App\Http\Controllers\ContratoController;
 use App\Http\Controllers\pagoController;
 use App\Http\Controllers\BoletaPagoController;
+use App\Http\Controllers\UsuarioController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -21,6 +22,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/usuarios', [UsuarioController::class, 'index'])->name('usuarios.index');
+
+    Route::resource('usuarios', UsuarioController::class);
+
     Route::resource('areas', AreaController::class);
     Route::resource('empleados', EmpleadoController::class);
     Route::get('/empleados/{id}/ficha', [EmpleadoController::class, 'ficha'])->name('empleados.fichaemp');
@@ -28,6 +34,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/empleado/pdf/{id}', [EmpleadoController::class, 'generarPdf'])->name('empleado.pdf');
 
     Route::resource('contratos', ContratoController::class);
+    Route::get('/contratos/{id}/edit', [ContratoController::class, 'edit'])->name('contratos.edit');
+
     Route::resource('pagos', PagoController::class);
     Route::get('pagos/create', [PagoController::class, 'create'])->name('pagos.create');
     Route::post('pagos', [PagoController::class, 'store'])->name('pagos.store');
@@ -38,7 +46,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/pagos/seleccionar_contrato', [PagoController::class, 'seleccionarContrato'])->name('pagos.seleccionarContrato');
     Route::get('/reportes', [\App\Http\Controllers\ReporteController::class, 'index'])->name('reportes.index');
 
-
+    Route::post('/contratos/{idContrato}/generar-pago', [ContratoController::class, 'generarPagoMensual'])->name('contratos.generarPago');
      
     
 

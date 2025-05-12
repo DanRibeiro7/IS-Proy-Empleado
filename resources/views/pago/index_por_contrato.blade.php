@@ -7,6 +7,7 @@
         </ul>
     </div>
 @endif
+
 <x-app-layout>
     <x-slot name="header">
         <h2 class="text-xl font-semibold text-gray-800 leading-tight">
@@ -25,6 +26,18 @@
                 <a href="{{ url()->previous() }}" class="inline-block bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded">
                     ← Regresar
                 </a>
+            </div>
+
+            {{-- Botón para generar pago mensual --}}
+            <div class="mb-4">
+                @if(!$contrato->fechaFin) {{-- Si es contrato indefinido --}}
+                    <form action="{{ route('contratos.generarPago', $contrato->idContrato) }}" method="POST">
+                        @csrf
+                        <button type="submit" class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
+                            Generar Pago Mensual
+                        </button>
+                    </form>
+                @endif
             </div>
 
             <table class="table-auto w-full">

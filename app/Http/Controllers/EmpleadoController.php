@@ -57,25 +57,38 @@ if ($empleado->fechaNacimiento) {
 
     return view('empleado.fichaemp', compact('empleado', 'antiguedad', 'beneficios','edad'));
 }
-    public function index()
-    {
-        $empleados = Empleado::with("estado_civil")->get();
-        return view('empleado.index', compact('empleados'));
-        foreach ($empleados as $empleado) {
-            if ($empleado->fechaCreacion) {
-                $fechaCreacion = Carbon::parse($empleado->fechaCreacion);
-                $hoy = Carbon::now();
-    
-                // Calcular la diferencia en años, meses y días
-                $empleado->antiguedad = $fechaCreacion->diff($hoy)->format('%y años, %m meses, %d días');
-            } else {
-                $empleado->antiguedad = 'Sin fecha de creación';
-            }
-        }
-    
-    
-        return view('empleado.index', compact('empleados'));
+public function index(Request $request)
+{
+    $query = Empleado::with('estado_civil');
+
+    // Filtro de búsqueda
+    if ($request->filled('buscar')) {
+        $busqueda = $request->buscar;
+        $query->where(function ($q) use ($busqueda) {
+            $q->where('nombres', 'like', '%' . $busqueda . '%')
+              ->orWhere('apePaterno', 'like', '%' . $busqueda . '%')
+              ->orWhere('apeMaterno', 'like', '%' . $busqueda . '%')
+              ->orWhere('dni', 'like', '%' . $busqueda . '%');
+        });
     }
+
+    // Aquí se ejecuta la consulta (siempre)
+    $empleados = $query->get();
+
+    // Calcular antigüedad
+    foreach ($empleados as $empleado) {
+        if ($empleado->fechaCreacion) {
+            $fechaCreacion = Carbon::parse($empleado->fechaCreacion);
+            $hoy = Carbon::now();
+            $empleado->antiguedad = $fechaCreacion->diff($hoy)->format('%y años, %m meses, %d días');
+        } else {
+            $empleado->antiguedad = 'Sin fecha de creación';
+        }
+    }
+
+    return view('empleado.index', compact('empleados'));
+}
+
 
     /**
      * Show the form for creating a new resource.

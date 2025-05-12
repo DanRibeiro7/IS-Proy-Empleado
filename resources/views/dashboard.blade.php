@@ -28,14 +28,14 @@
                 @endif
 
                 {{-- Menú para EMPLEADO --}}
-                @if (Auth::user()->role === 'empleado')
+                @if (Auth::user()->role === 'admin')
                     <a href="{{ route('pagos.index') }}" class="block bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 mt-4">
                         💰 Ver Pagos
                     </a>
                 @endif
 
                 {{-- Menú para SUPERVISOR --}}
-                @if (Auth::user()->role === 'supervisor')
+                @if (Auth::user()->role === 'admin')
                     <a href="{{ route('reportes.index') }}" class="block bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700 mt-4">
                         📊 Ver Reportes
                     </a>

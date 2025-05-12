@@ -8,6 +8,19 @@
         </a>
     </x-slot>
 
+    <!-- Formulario de Búsqueda centrado -->
+<div class="flex justify-center my-4">
+    <form method="GET" action="{{ route('contratos.index') }}" class="flex space-x-2 items-center">
+        <input type="text" name="buscar" value="{{ request('buscar') }}"
+               class="border px-4 py-2 rounded w-80"
+               placeholder="Buscar por nombre, apellido o DNI del empleado">
+
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            Buscar
+        </button>
+    </form>
+</div>
+
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">

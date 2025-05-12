@@ -18,14 +18,28 @@ class ContratoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $contratos =  Contrato::with('empleado')->get();;
-        $areas = Contrato::with('area')->get();
-        $modalidades = Contrato::with('area')->get();
-        $estados=Estado::whereIn('idEstado',[1,2])->get(); // O el método que estés utilizando para obtener los contratos
-        return view('contrato.index', compact('contratos','areas','modalidades','estados'));
-    }
+  public function index(Request $request)
+{
+    $busqueda = $request->input('buscar');
+
+    $contratos = Contrato::with(['empleado', 'area', 'modalidad', 'estado'])
+        ->when($busqueda, function ($query, $busqueda) {
+            $query->whereHas('empleado', function ($q) use ($busqueda) {
+                $q->where('apePaterno', 'like', '%' . $busqueda . '%')
+                  ->orWhere('apeMaterno', 'like', '%' . $busqueda . '%')
+                  ->orWhere('nombres', 'like', '%' . $busqueda . '%')
+                  ->orWhere('dni', 'like', '%' . $busqueda . '%');
+            });
+        })
+        ->get();
+
+    $areas = Area::all();
+    $modalidades = Modalidad::all();
+    $estados = Estado::whereIn('idEstado', [1, 2])->get();
+
+    return view('contrato.index', compact('contratos', 'areas', 'modalidades', 'estados'));
+}
+
     private function calcularSalario($idContrato, $fechaPago)
     {
         $contrato = \App\Models\Contrato::with('area')->findOrFail($idContrato);
@@ -81,7 +95,7 @@ class ContratoController extends Controller
         'idJornada' => 'required',
         //'codContrato' => 'required',
         'fechaInicio' => 'required|date',
-        'fechaFin' => 'required|date',
+        'fechaFin' => 'nullable|date|after_or_equal:fechaInicio',
         'idEstado' => 'required',
         'horasLaboral' => 'required',
         'idBanco' => 'required|exists:banco,idBanco',  // Validar que el banco existe
@@ -104,36 +118,23 @@ class ContratoController extends Controller
     
         
        
-                $inicio = $contrato->fechaInicio->copy()->addMonth(); // comienza 1 mes después
-            $fin = $contrato->fechaFin->copy()->startOfMonth();   // asegúrate de que esté al inicio del mes
+         // Generar pagos mensuales
+$inicio = \Carbon\Carbon::parse($contrato->fechaInicio)->copy()->addMonth();
 
-        $fechas = [];
+// Si hay fechaFin, generar pagos hasta ese mes
+if ($contrato->fechaFin) {
+    $fin = \Carbon\Carbon::parse($contrato->fechaFin)->copy()->startOfMonth();
 
-        for ($fecha = $inicio->copy()->startOfMonth(); $fecha <= $fin; $fecha->addMonth()) {
-            $fechas[] = $fecha->copy(); // guardar copia para usarla más adelante
-        }
+    for ($fecha = $inicio->copy()->startOfMonth(); $fecha <= $fin; $fecha->addMonth()) {
+        $this->crearPagoMensual($contrato, $request, $fecha);
+    }
+} else {
+    // Si no hay fechaFin (contrato indefinido), solo generar el primer pago
+    $this->crearPagoMensual($contrato, $request, now());
+}
 
-        // Ejemplo: crear registros con esas fechas
-        foreach ($fechas as $fecha) {
-            $salario = app(\App\Http\Controllers\PagoController::class)->calcularSalario($contrato->idContrato, $fecha);
-
-            Pago::create([
-                'idContrato' => $contrato->idContrato,
-                'idBanco' => $request->idBanco, // O el valor que necesites
-                'numCuenta' => $request->numCuenta, // O el valor que necesites
-                'fechaPago' => $fecha,
-                'estado' => 1, // O el valor que necesites
-                'monto' => $salario['monto'], // O el valor que necesites
-                'gratificacion' =>  $salario['gratificacion'], // O el valor que necesites
-                'fechacreacion' => now(),
-            ]);
-        }
+return redirect()->route('contratos.index')->with('success', 'Contrato creado con éxito.');
         
-
-
-
-
-        return redirect()->route('contratos.index')->with('success', 'Contrato creado con éxito.');
     }
 
     /**
@@ -149,7 +150,16 @@ class ContratoController extends Controller
      */
     public function edit(Contrato $contrato)
     {
-        //
+         $empleadosConContrato = Contrato::pluck('idEmpleado')->toArray();
+        $empleados = Empleado::whereNotIn('idEmpleado', $empleadosConContrato)->get(); // Obtener todos los empleados
+        $areas = Area::all(); // Obtener todas las áreas
+        $modalidades = Modalidad::all(); // Obtener todas las modalidades
+        $jornadas = Jornada::all(); // Obtener todas las jornadas
+        $estados=Estado::whereIn('idEstado',[1,2])->get();
+        $bancos=Banco::all(); 
+    
+        // Pasar estas variables a la vista
+        return view('contrato.edit', compact('contrato','empleados', 'areas', 'modalidades', 'jornadas','estados','bancos'));
     }
 
     /**
@@ -183,5 +193,51 @@ class ContratoController extends Controller
 
         return redirect()->route('contratos.index')->with('success', 'Contrato eliminado exitosamente.');
     }
+    private function crearPagoMensual($contrato, $request, $fecha)
+{
+    $salario = $this->calcularSalario($contrato->idContrato, $fecha);
+
+    Pago::create([
+        'idContrato' => $contrato->idContrato,
+        'idBanco' => $request->idBanco,
+        'numCuenta' => $request->numCuenta,
+        'fechaPago' => $fecha,
+        'estado' => 1,
+        'monto' => $salario['monto'],
+        'gratificacion' => $salario['gratificacion'],
+        'fechacreacion' => now(),
+    ]);
+}
+public function generarPagoMensual(Request $request, $idContrato)
+{
+    $contrato = Contrato::findOrFail($idContrato);
+    $fecha = now()->startOfMonth();
+
+    $yaExiste = Pago::where('idContrato', $idContrato)
+        ->whereMonth('fechaPago', $fecha->month)
+        ->whereYear('fechaPago', $fecha->year)
+        ->exists();
+
+    if ($yaExiste) {
+        return back()->with('info', 'Ya existe un pago para este contrato este mes.');
+    }
+
+    $salario = $this->calcularSalario($idContrato, $fecha);
+
+    Pago::create([
+        'idContrato' => $idContrato,
+        'idBanco' => $request->idBanco,
+        'numCuenta' => $request->numCuenta,
+        'fechaPago' => $fecha,
+        'estado' => 1,
+        'monto' => $salario['monto'],
+        'gratificacion' => $salario['gratificacion'],
+        'fechacreacion' => now(),
+    ]);
+
+    return back()->with('success', 'Pago mensual generado correctamente.');
+}
+
+
    
 }
