@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Boleta de Pago -  PINKI</title>
+    <title>Boleta de Pago - PINKI</title>
     <style>
         body {
             font-family: DejaVu Sans, sans-serif;
@@ -47,7 +47,7 @@
 </head>
 <body>
 
-    <div class="titulo">BOLETA DE PAGO - Banco PINKI</div>
+    <div class="titulo">BOLETA DE PAGO - PINKI</div>
 
     <table class="info">
         <tr>

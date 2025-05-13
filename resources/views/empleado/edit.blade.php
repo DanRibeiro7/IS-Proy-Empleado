@@ -36,14 +36,25 @@
                             @enderror
                         </div>
 
-                        <!-- DNI -->
-                        <div class="mb-6">
-                            <label for="dni" class="block text-sm font-semibold text-gray-700">DNI</label>
-                            <input type="text" name="dni" class="form-input w-full" maxlength="8" value="{{ old('dni', $empleado->dni ?? '') }}">
-                            @error('dni')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
+                 <!-- DNI -->
+<div class="mb-6">
+    <label for="dni" class="block text-sm font-semibold text-gray-700">DNI</label>
+    <input
+        type="text"
+        name="dni"
+        class="form-input w-full"
+        maxlength="8"
+        minlength="8"
+        pattern="\d{8}"
+        inputmode="numeric"
+        oninput="this.value=this.value.replace(/\D/g,'')"
+        value="{{ old('dni', $empleado->dni ?? '') }}"
+        required
+    >
+    @error('dni')
+        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+    @enderror
+</div>
 
                         <!-- Nombres -->
                         <div class="mb-6">
@@ -143,26 +154,29 @@
         @endif
     </div>
 
-                        <!-- Estado -->
-                        <div class="mb-6">
-                            <label for="idEstado" class="block text-sm font-semibold text-gray-700">Estado</label>
-                            <select name="idEstado" class="form-input w-full">
-                                @foreach($estados as $obj)
-                                    <option value="{{ $obj->idEstado }}" {{ old('idEstado', $empleado->idEstado ?? '') == $obj->idEstado ? 'selected' : '' }}>
-                                        {{ $obj->nomEstado }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
+                   <!-- Estado -->
+<div class="mb-6">
+    <label for="idEstado" class="block text-sm font-semibold text-gray-700">Estado</label>
+    <select name="idEstado" class="form-input w-full">
+        @foreach($estados as $obj)
+            @if($loop->iteration <= 2)
+                <option value="{{ $obj->idEstado }}"
+                    {{ old('idEstado', $empleado->idEstado ?? '') == $obj->idEstado ? 'selected' : '' }}>
+                    {{ $obj->nomEstado }}
+                </option>
+            @endif
+        @endforeach
+    </select>
+</div>
 
-                    </div>
+                    
 
                     <!-- Botón de Enviar -->
                     <div class="mt-6">
-    <button type="submit" class="btn btn-default ">
-        {{ isset($empleado) ? 'Actualizar' : 'Guardar' }}
-    </button>
-</div>
+ <button type="submit" class="btn btn-default font-bold">
+    {{ isset($empleado) ? 'Actualizar' : 'Guardar' }}
+</button>
+                    </div>
                 </form>
             </div>
         </div>

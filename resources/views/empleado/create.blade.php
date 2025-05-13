@@ -27,11 +27,18 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                    
 
-                    <div>
-                        <label for="dni" class="block font-medium text-sm text-gray-700">DNI</label>
-                        <input type="text" name="dni" class="form-input w-full" maxlength="8"
-                            value="{{ old('dni', $empleado->dni ?? '') }}">
-                    </div>
+                   <div>
+    <label for="dni" class="block font-medium text-sm text-gray-700">DNI</label>
+    <input type="text"
+           name="dni"
+           class="form-input w-full"
+           minlength="8"
+           maxlength="8"
+           pattern="\d{8}"
+           inputmode="numeric"
+           oninput="this.value=this.value.replace(/\D/g,'')"
+           value="{{ old('dni', $empleado->dni ?? '') }}">
+</div>
 
                     <div>
                         <label for="nombres" class="block font-medium text-sm text-gray-700">Nombres</label>
@@ -89,7 +96,7 @@
 
                     <div>
                         <label for="numCelular" class="block font-medium text-sm text-gray-700">Celular</label>
-                        <input type="text" name="numCelular" class="form-input w-full" maxlength="9"
+                        <input type="text" name="numCelular" class="form-input w-full"minlength maxlength="9"
                             value="{{ old('numCelular', $empleado->numCelular ?? '') }}">
                     </div>
 
@@ -109,19 +116,17 @@
 
 
 
-                  
-                    <div>
-                    <label for="idEstado" class="block font-medium text-sm text-gray-700">Estado</label>
-                        <select name="idEstado" class="form-input w-full">
-                            @foreach($estados as $obj)
-                            <option value="{{ $obj->idEstado }}"
-                                {{ old('idEstado', $empleado->idEstado ?? '') == $obj->idEstado ? 'selected' : '' }}>
-                                {{ $obj->nomEstado }}
-                            </option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
+                 <div>
+    <label for="idEstado" class="block font-medium text-sm text-gray-700">Estado</label>
+    <select name="idEstado" class="form-input w-full bg-gray-100" disabled>
+        <option value="{{ $estados[0]->idEstado }}">
+            {{ $estados[0]->nomEstado }}
+        </option>
+    </select>
+    {{-- Campo oculto para enviar el valor aunque el select esté deshabilitado --}}
+    <input type="hidden" name="idEstado" value="{{ $estados[0]->idEstado }}">
+</div>
+
 
 
                 <div class="mt-6">

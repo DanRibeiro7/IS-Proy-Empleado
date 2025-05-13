@@ -16,7 +16,7 @@
                class="border px-4 py-2 rounded w-80"
                placeholder="Buscar por nombre, apellido o DNI">
 
-        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+        <button type="submit" class="bg-blue-500 text-black px-4 py-2 rounded hover:bg-blue-600">
             Buscar
         </button>
     </form>
@@ -68,9 +68,7 @@
                                             Eliminar
                                         </button>
                                     </form>
-                                    <a href="{{ route('empleado.pdf', ['id' => $empleado->idEmpleado]) }}" target="_blank">
-                                    Ver PDF del Empleado
-                                    </a>
+                                   
                                 </td>
                             </tr>
                         @endforeach

@@ -15,7 +15,7 @@
                class="border px-4 py-2 rounded w-80"
                placeholder="Buscar por nombre, apellido o DNI del empleado">
 
-        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+        <button type="submit" class="bg-blue-500 text-black px-4 py-2 rounded hover:bg-blue-600">
             Buscar
         </button>
     </form>

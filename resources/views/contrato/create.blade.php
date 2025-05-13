@@ -129,10 +129,21 @@
                         </select>
                     </div>
 
-                    <div class="mb-6">
-                        <label for="numCuenta" class="block text-sm font-semibold text-gray-700">Número de Cuenta</label>
-                        <input type="text" name="numCuenta" id="numCuenta" class="mt-2 p-2 border border-gray-300 rounded-lg w-full" value="{{ old('numCuenta', $contrato->numCuenta ?? '') }}" required>
-                    </div>
+                   <div class="mb-6">
+    <label for="numCuenta" class="block text-sm font-semibold text-gray-700">Número de Cuenta</label>
+    <input
+        type="text"
+        name="numCuenta"
+        id="numCuenta"
+        class="mt-2 p-2 border border-gray-300 rounded-lg w-full"
+        value="{{ old('numCuenta', $contrato->numCuenta ?? '') }}"
+        maxlength="14"
+        inputmode="numeric"
+        oninput="this.value=this.value.replace(/\D/g,'')"
+        required
+    >
+</div>
+
 
                     <!-- Estado -->
                     <div class="mb-6">
